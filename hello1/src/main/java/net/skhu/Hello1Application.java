@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class}) //프로퍼티에 디비 입력 안해줬을 때
+//@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class}) //프로퍼티에 디비 입력 안해줬을 때
 public class Hello1Application {
 
 	public static void main(String[] args) {

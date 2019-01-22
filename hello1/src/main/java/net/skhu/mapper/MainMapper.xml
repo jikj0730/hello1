@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.skhu.mapper.MainMapper">
+
+	<select id="login" resultType="UserDto">
+		select * from user where userId=#{userId} and password=#{password}
+	</select>
+	
+	<select id="BoardList" resultType="ArticleDto">
+		select id, title, date, writer from board
+	</select>
+
+</mapper>
