@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <c:url var="R" value="/" />
 <!DOCTYPE html>
 <html>
@@ -17,6 +18,15 @@
 <link rel="stylesheet" href="${R}res/common.css">
 </head>
 <body>
+<sec:authorize access="authenticated">
+	<sec:authentication property="user.userId" />
+	<sec:authorize access="hasRole('ROLE_ADMIN')">
+   	<h1>관리자 입니다</h1>
+	</sec:authorize>
+	<sec:authorize access="hasRole('ROLE_USER')">
+   	<h1>일반 회원 입니다</h1>
+	</sec:authorize>
+	
 	<div class="container">
 		<h1>게시글 목록</h1>
 		<div class="pull-right mb5">
@@ -45,5 +55,15 @@
 			</tbody>
 		</table>
 	</div>
+
+	
+
+</sec:authorize>
+<sec:authorize access="not authenticated">
+   <div class="container">
+		<h1>로그인 하세요</h1>
+	</div>
+</sec:authorize>
+
 </body>
 </html>

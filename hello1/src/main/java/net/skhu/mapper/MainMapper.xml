@@ -11,5 +11,15 @@
 	<select id="BoardList" resultType="ArticleDto">
 		select id, title, date, writer from board
 	</select>
+	
+	<insert id="userInsert" parameterType="UserDto">
+		insert into user (userId, password)
+		values (#{userId}, #{password});
+	</insert>
+	
+	<insert id="articleInsert">
+		insert into board (title, date, writer, content, userId)
+		values( #{title},#{date},#{writer},#{content},#{userId} )
+	</insert>
 
 </mapper>
