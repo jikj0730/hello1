@@ -27,13 +27,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		http.authorizeRequests()
 		.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
 		.antMatchers("/board/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+		//.antMatchers("/board/**").hasRole("ROLE_ADMIN")
+		//.antMatchers("/board/**").hasRole("ROLE_USER")
 		.antMatchers("/").permitAll()
+		.antMatchers("/signup").permitAll()
 		.antMatchers("/**").authenticated();
 
 		http.csrf().disable();
 
 		http.formLogin()
-		.loginPage("/login")
+		.loginPage("/")
 		.loginProcessingUrl("/login_processing")
 		.failureUrl("/")
 		.defaultSuccessUrl("/board", true)

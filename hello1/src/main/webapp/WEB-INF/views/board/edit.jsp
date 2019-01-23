@@ -27,9 +27,10 @@ body {
 <a href="/logout_processing" class="btn btn-success pull-right mb5"> 
 		로그아웃
 	</a>
+	<h1>수정</h1>
 	<div class="container">
 		<div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-			<form action="/board/create" method="post">
+			<form action="/board/edit" method="post">
 				<div class="form-group">
 					<label for="exampleInputEmail1">아이디</label> <input type="text"
 						value="${writer }" class="form-control" id="userId"
@@ -37,12 +38,13 @@ body {
 				</div>
 				<div class="form-group">
 					<label for="ddd">제목</label> <input type="text" class="form-control"
-						name="title">
+						name="title" value="${article.title }">
 				</div>
 				<div class="form-group">
 					<label for="aaa">내용</label>
-					<textarea class="form-control" rows="3" name="content"></textarea>
+					<textarea class="form-control" rows="3" name="content">${article.content}</textarea>
 				</div>
+				<input type="hidden" name="id" value="${article.id }"/>
 				<button type="submit" id="button1" class="btn btn-default">작성</button>
 
 			</form>

@@ -21,5 +21,47 @@
 		insert into board (title, date, writer, content, userId)
 		values( #{title},#{date},#{writer},#{content},#{userId} )
 	</insert>
+	
+	<select id="ReadArticle" resultType="ArticleDto">
+		select id, title, date, writer, content, userId from board
+		where id=#{id}
+	</select>
 
+	<insert id="AddReply" >
+		insert into reply (content, date, articleId, userId, writer)
+		values (#{content},#{date},#{articleId},#{userId},#{writer})
+	</insert>
+	
+	<select id="ReplyList" resultType="ReplyDto">
+		select id, content, date, writer, userId
+		from reply
+		where articleId=#{articleId}
+		order by date asc
+	</select>
+	
+	<delete id="DeleteReply">
+		delete from reply
+		where id=#{id}
+	</delete>
+	
+	<delete id="DeleteArticle">
+		delete from board
+		where id=#{id}
+	</delete>
+	
+	<delete id="DeleteArticleReply">
+		delete from reply
+		where articleId=#{articleId}
+	</delete>
+	
+	<update id="EditArticle">
+		update board
+		set title=#{title}, content=#{content}, date=#{date}  
+		where id=#{id}
+	</update>
+	
+	<select id="replycount" resultType="Integer">
+		SELECT count(*) FROM reply where articleId=#{articleId}
+	</select>
+	
 </mapper>

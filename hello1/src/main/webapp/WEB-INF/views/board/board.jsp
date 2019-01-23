@@ -19,9 +19,12 @@
 </head>
 <body>
 <sec:authorize access="authenticated">
+	<a href="/logout_processing" class="btn btn-success pull-right mb5"> 
+		로그아웃
+	</a>
 	<sec:authentication property="user.userId" />
 	<sec:authorize access="hasRole('ROLE_ADMIN')">
-   	<h1>관리자 입니다</h1>
+   	<a href="/admin/testadmin"><h1>관리자 입니다</h1></a>
 	</sec:authorize>
 	<sec:authorize access="hasRole('ROLE_USER')">
    	<h1>일반 회원 입니다</h1>
@@ -30,11 +33,11 @@
 	<div class="container">
 		<h1>게시글 목록</h1>
 		<div class="pull-right mb5">
-			<a href="create" class="btn btn-info"> 
+			<a href="/board/create" class="btn btn-info"> 
 				<span class="glyphicon glyphicon-user"></span> 게시글 등록
 			</a>
 		</div>
-		<table class="table table-bordered mt5">
+		<table class="table table-bordered mt5 table-hover">
 			<thead>
 				<tr>
 					<th style="width: 17%">id</th>
@@ -45,7 +48,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="list" items="${ List }">
-					<tr data-url="article?id=${ list.id }">
+					<tr data-url="/board/article?id=${ list.id }">
 						<td>${ list.id }</td>
 						<td>${ list.title }</td>
 						<td>${ list.writer }</td>

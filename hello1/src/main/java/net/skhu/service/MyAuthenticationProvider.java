@@ -36,6 +36,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 		switch (user.getUserType()) {
 		case "ROLE_ADMIN": role = "ROLE_ADMIN"; break;
 		case "ROLE_USER": role = "ROLE_USER"; break;
+		case "ROLE_TEST": role = "ROLE_TEST"; break;
 		//case "ROLE_ADMIN": role = "hasRole('ROLE_ADMIN')"; break;
 		//case "ROLE_USER": role = "hasRole('ROLE_USER')"; break;
 		}
@@ -52,9 +53,9 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
 		private static final long serialVersionUID = 1L;
 		UserDto user;
 
-		public MyAuthenticaion (String loginId, String passwd,
-				List<GrantedAuthority> grantedAuthorities, UserDto user) {
-			super(loginId, passwd, grantedAuthorities);
+		public MyAuthenticaion (String loginId, String passwd, List<GrantedAuthority> grantedAuthorities, UserDto user) {
+			//super(loginId, passwd, grantedAuthorities); //authentication.getPrincipal()에 loginId 저장
+			super(user, passwd, grantedAuthorities); //authentication.getPrincipal()에 user 객체 저장
 			this.user = user;
 		}
 

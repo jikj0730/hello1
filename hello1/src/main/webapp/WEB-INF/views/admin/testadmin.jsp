@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-xxxx
+<h1>ROLE_ADMIN만 볼 수 있는 페이지</h1>
 </body>
 </html>
