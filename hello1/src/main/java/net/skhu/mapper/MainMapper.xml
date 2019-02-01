@@ -9,7 +9,7 @@
 	</select>
 	
 	<select id="BoardList" resultType="ArticleDto">
-		select id, title, date, writer from board
+		select no, title, date, writer from board
 	</select>
 	
 	<insert id="userInsert" parameterType="UserDto">
@@ -18,50 +18,50 @@
 	</insert>
 	
 	<insert id="articleInsert">
-		insert into board (title, date, writer, content, userId)
-		values( #{title},#{date},#{writer},#{content},#{userId} )
+		insert into board (title, date, writer, content, userNo)
+		values( #{title},#{date},#{writer},#{content},#{userNo} )
 	</insert>
 	
 	<select id="ReadArticle" resultType="ArticleDto">
-		select id, title, date, writer, content, userId from board
+		select id, title, date, writer, content, userNo from board
 		where id=#{id}
 	</select>
 
 	<insert id="AddReply" >
-		insert into reply (content, date, articleId, userId, writer)
-		values (#{content},#{date},#{articleId},#{userId},#{writer})
+		insert into reply (content, date, articleId, userNo, writer)
+		values (#{content},#{date},#{articleId},#{userNo},#{writer})
 	</insert>
 	
 	<select id="ReplyList" resultType="ReplyDto">
-		select id, content, date, writer, userId
+		select id, content, date, writer, userNo
 		from reply
-		where articleId=#{articleId}
+		where articleNo=#{articleNo}
 		order by date asc
 	</select>
 	
 	<delete id="DeleteReply">
 		delete from reply
-		where id=#{id}
+		where no=#{no}
 	</delete>
 	
 	<delete id="DeleteArticle">
 		delete from board
-		where id=#{id}
+		where no=#{no}
 	</delete>
 	
 	<delete id="DeleteArticleReply">
 		delete from reply
-		where articleId=#{articleId}
+		where articleNo=#{articleNo}
 	</delete>
 	
 	<update id="EditArticle">
 		update board
 		set title=#{title}, content=#{content}, date=#{date}  
-		where id=#{id}
+		where no=#{no}
 	</update>
 	
 	<select id="replycount" resultType="Integer">
-		SELECT count(*) FROM reply where articleId=#{articleId}
+		SELECT count(*) FROM reply where articleNo=#{articleNo}
 	</select>
 	
 </mapper>

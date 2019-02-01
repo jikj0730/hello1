@@ -29,9 +29,12 @@
 	<sec:authorize access="hasRole('ROLE_USER')">
    	<h1>일반 회원 입니다</h1>
 	</sec:authorize>
-	
+	<c:set var="contextPath" value="${pageContext.request.contextPath}" />
+
+
 	<div class="container">
 		<h1>게시글 목록</h1>
+		<h1>${contextPath}</h1>
 		<div class="pull-right mb5">
 			<a href="/board/create" class="btn btn-info"> 
 				<span class="glyphicon glyphicon-user"></span> 게시글 등록

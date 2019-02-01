@@ -2,17 +2,17 @@ package net.skhu.dto;
 
 public class ReplyDto {
 
-	private int id;
+	private int no;
 	private String content;
 	private String date;
-	private int articleId;
-	private int userId;
+	private int articleNo;
+	private int userNo;
 	private String writer;
-	public int getId() {
-		return id;
+	public int getNo() {
+		return no;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setNo(int no) {
+		this.no = no;
 	}
 	public String getContent() {
 		return content;
@@ -26,17 +26,17 @@ public class ReplyDto {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public int getArticleId() {
-		return articleId;
+	public int getArticleNo() {
+		return articleNo;
 	}
-	public void setArticleId(int articleId) {
-		this.articleId = articleId;
+	public void setArticleNo(int articleNo) {
+		this.articleNo = articleNo;
 	}
-	public int getUserId() {
-		return userId;
+	public int getUserNo() {
+		return userNo;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
 	}
 	public String getWriter() {
 		return writer;
@@ -44,6 +44,5 @@ public class ReplyDto {
 	public void setWriter(String writer) {
 		this.writer = writer;
 	}
-	
 	
 }

@@ -2,17 +2,17 @@ package net.skhu.dto;
 
 public class ArticleDto {
 
-	private int id;
+	private int no;
 	private String title;
 	private String date;
 	private String writer;
 	private String content;
-	private int userId;
-	public int getId() {
-		return id;
+	private int userNo;
+	public int getNo() {
+		return no;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setNo(int no) {
+		this.no = no;
 	}
 	public String getTitle() {
 		return title;
@@ -38,11 +38,11 @@ public class ArticleDto {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public int getUserId() {
-		return userId;
+	public int getUserNo() {
+		return userNo;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUserNo(int userNo) {
+		this.userNo = userNo;
 	}
 	
 	

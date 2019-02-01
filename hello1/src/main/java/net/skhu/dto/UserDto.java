@@ -2,15 +2,15 @@ package net.skhu.dto;
 
 public class UserDto {
 
-	private int id;
+	private int no;
 	private String userId;
 	private String password;
 	private String userType;
-	public int getId() {
-		return id;
+	public int getNo() {
+		return no;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setNo(int no) {
+		this.no = no;
 	}
 	public String getUserId() {
 		return userId;
@@ -30,6 +30,5 @@ public class UserDto {
 	public void setUserType(String userType) {
 		this.userType = userType;
 	}
-	
 	
 }
