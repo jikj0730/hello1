@@ -24,7 +24,7 @@
 	</a>
 	<sec:authentication property="user.userId" />
 	<sec:authorize access="hasRole('ROLE_ADMIN')">
-   	<a href="/admin/testadmin"><h1>관리자 입니다</h1></a>
+   	<a href="/admin/userlist"><h1>관리자-회원 목록 보기</h1></a>
 	</sec:authorize>
 	<sec:authorize access="hasRole('ROLE_USER')">
    	<h1>일반 회원 입니다</h1>
@@ -43,7 +43,7 @@
 		<table class="table table-bordered mt5 table-hover">
 			<thead>
 				<tr>
-					<th style="width: 17%">id</th>
+					<th style="width: 17%">번호</th>
 					<th style="width: 49%">제목</th>
 					<th style="width: 17%">작성자</th>
 					<th style="width: 17%">날짜</th>
@@ -51,8 +51,8 @@
 			</thead>
 			<tbody>
 				<c:forEach var="list" items="${ List }">
-					<tr data-url="/board/article?id=${ list.id }">
-						<td>${ list.id }</td>
+					<tr data-url="/board/article?no=${ list.no }">
+						<td>${ list.no }</td>
 						<td>${ list.title }</td>
 						<td>${ list.writer }</td>
 						<td>${ list.date}</td>

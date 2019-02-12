@@ -23,15 +23,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import net.skhu.dto.ReplyDto;
 import net.skhu.dto.UserDto;
 import net.skhu.service.MainService;
+import net.skhu.utils.DateUtils;
 
+/***********************************************
+ * 
+ * @author Promise
+ * 제목 : HomeController
+ * 설명 : 사용자의 요청을 받는 역할을 담당한다
+ * 설계자 : 전경준
+ * 작성자 : 전경준
+ * 
+ *
+ **********************************************/
 @Controller
 public class HomeController {
 
 	@Autowired
-	private MainService mainService;
+	private MainService mainService; //서비스 객체
 
 	@GetMapping("/")
-	public String MainPage() {
+	public String mainPage() {
 
 		return "login";
 	}
@@ -67,38 +78,59 @@ public class HomeController {
 		}
 	}*/
 
-	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
+	/*
+	 * 게시판에서 볼 게시글의 목록을 가져온다
+	 */
+	//@Secured({"ROLE_ADMIN, "ROLE_USER"})
 	@GetMapping("/board")
-	public String Board(Model model) {
+	public String board(Model model) {
 
-		model.addAttribute("List", mainService.BoardList());
+		model.addAttribute("List", mainService.boardList());
 		return "board/board";
 	}
 
+	/*
+	 * 회원가입 요청을 받아 회원가입을 처리한다
+	 */
 	@PostMapping("/signup")
 	@ResponseBody
-	public ResponseEntity<String> SignUp( @RequestBody UserDto user  ){
+	public ResponseEntity<String> signUp( @RequestBody UserDto user  ){
 
 		//System.out.println(user.getUserId()+"  "+user.getPassword());
-		int num = mainService.userInsert(user);
-		if(num>0)
-			return new ResponseEntity<>("ok",  HttpStatus.OK);
-		else
-			return new ResponseEntity<>("실패",  HttpStatus.INTERNAL_SERVER_ERROR);
+		int check = mainService.checkId(user.getUserId());
+		System.out.println(check);
+		//가입된 아이디가 없다면
+		if(check==0) {
+			int num = mainService.userInsert(user);
+			if(num>0)
+				return new ResponseEntity<>("회원가입에 성공하였습니다.",  HttpStatus.OK);
+			else
+				return new ResponseEntity<>("회원가입에 실패하였습니다.",  HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		else { //가입된 아이디가 있다면
+			return new ResponseEntity<>("중복된 아이디가 존재합니다.",  HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 	}
 
 	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("board/create")
-	public String Create() {
+	public String create() {
 
 		return "board/create";
 	}
 
+	
+	/*
+	 * 게시글을 작성하여 디비에 넣는다
+	 */
 	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("board/create")
 	public String CreateArticle(@RequestParam(value="title") String title,
 			@RequestParam(value="content") String content,
 			Authentication authentication, SecurityContextHolder test) {
+		
+		//스프링 시큐리티 정보 출력, 삭제 x
 		/*
 		System.out.println("-----------");
 		System.out.println(test.getContext());
@@ -118,13 +150,13 @@ public class HomeController {
 		
 		try {
 			UserDto user = ((UserDto)authentication.getPrincipal());
-			Date d = new Date();
-			SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//Date d = new Date();
+			//SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//System.out.println("제목 : "+title);
 			//System.out.println("작성자 : "+user.getUserId());
 			//System.out.println("현재날짜 : "+ simple.format(d));
 			//System.out.println("내용 : "+content);
-			int num = mainService.articleInsert(title, simple.format(d), user.getUserId(), content, user.getId());
+			int num = mainService.articleInsert(title, DateUtils.nowDate(), user.getUserId(), content, user.getNo());
 			if(num>0) {
 
 				return "redirect:/board";
@@ -139,31 +171,32 @@ public class HomeController {
 	}
 
 	//@Secured("hasRole('ROLE_ADMIN')")
-	@GetMapping("admin/testadmin")
+	@GetMapping("admin/userlist")
 	public String testadmin() {
-		return "admin/testadmin";
+		return "admin/userlist";
 	}
 
 	//@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@GetMapping("board/article")
-	public String ReadArticle(@RequestParam(value="id") int id, Model model) {
+	public String readArticle(@RequestParam(value="no") int no, Model model) {
 
-		model.addAttribute("article", mainService.ReadArticle(id));
-		model.addAttribute("ReplyList", mainService.ReplyList(id));
+		model.addAttribute("article", mainService.readArticle(no));
+		model.addAttribute("ReplyList", mainService.replyList(no));
 		return "board/article";
 	}
 	
 	@PostMapping("board/reply")
 	@ResponseBody
-	public ResponseEntity<Boolean> AddReply(@RequestBody ReplyDto reply,
+	public ResponseEntity<Boolean> addReply(@RequestBody ReplyDto reply,
 			Authentication authentication){
-		
+		//System.out.println("dd");
 		try {
 			UserDto user = ((UserDto)authentication.getPrincipal());
-			Date d = new Date();
-			SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			int num = mainService.AddReply(reply.getContent(), simple.format(d), 
-					reply.getArticleId(), user.getId(), user.getUserId());
+			//Date d = new Date();
+			//SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//System.out.println("컨트롤러1");
+			int num = mainService.addReply(reply.getContent(), /*simple.format(d)*/ DateUtils.nowDate(), 
+					reply.getArticleNo(), user.getNo(), user.getUserId());
 			if(num>0) {
 
 				return new ResponseEntity<>(true,  HttpStatus.OK);
@@ -179,12 +212,16 @@ public class HomeController {
 		
 	}
 	
+	/*
+	 * 댓글을 삭제하기 위한 메소드
+	 * RedirectAttributes를 통해 댓글 삭제 후, 해당 게시글 번호를 전송한다.
+	 */
 	@GetMapping("board/reply/delete")
-	public String DeleteReply(@RequestParam(value="id") int id, 
-			@RequestParam(value="aid") int aid, RedirectAttributes rttr) throws Exception{
-		rttr.addAttribute("id",aid);
+	public String deleteReply(@RequestParam(value="no") int no, 
+			@RequestParam(value="ano") int ano, RedirectAttributes rttr){
+		rttr.addAttribute("no",ano);
 		try {
-			int num = mainService.DeleteReply(id);
+			int num = mainService.deleteReply(no);
 			if(num>0) {
 				
 				//model.addAttribute("id", aid);
@@ -200,42 +237,45 @@ public class HomeController {
 		
 	}
 	
+	/*
+	 * 게시글 삭제 - 댓글까지 모두 삭제해야 한다
+	 */
 	@GetMapping("board/delete")
-	public String DeleteArticle(@RequestParam(value="id") int id, RedirectAttributes rttr) {
+	public String deleteArticle(@RequestParam(value="no") int no, RedirectAttributes rttr) {
 		
-		boolean check = mainService.DeleteArticle(id);
+		boolean check = mainService.deleteArticle(no);
 		if(check) {
-			System.out.println("삭제성공");
+			//System.out.println("삭제성공");
 			return "redirect:/board";
 		}
 		else {
-			rttr.addAttribute("id",id);
+			rttr.addAttribute("no",no);
 			return "redirect:/board/article";
 		}
 			
 	}
 	
 	@GetMapping("board/edit")
-	public String EditArticle(@RequestParam(value="id") int id, Model model) {
+	public String editArticle(@RequestParam(value="no") int no, Model model) {
 		
-		model.addAttribute("article", mainService.ReadArticle(id));
+		model.addAttribute("article", mainService.readArticle(no));
 		return "board/edit";
 			
 	}
 	
 	@PostMapping("board/edit")
-	public String EditArticlePost(@RequestParam(value="title") String title,
+	public String editArticlePost(@RequestParam(value="title") String title,
 			@RequestParam(value="content") String content, RedirectAttributes rttr,
-			@RequestParam(value="id") int id) {
+			@RequestParam(value="no") int no) {
 		
 		System.out.println("edit");
 		//model.addAttribute("article", mainService.ReadArticle(id));
 		//return "board/edit";
-		rttr.addAttribute("id",id);
+		rttr.addAttribute("no",no);
 		try {
 			Date d = new Date();
 			SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			int num = mainService.EditArticle(id, title, simple.format(d), content);
+			int num = mainService.editArticle(no, title, simple.format(d), content);
 			if(num>0)
 				return "redirect:/board/article";
 			else

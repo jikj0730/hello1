@@ -44,7 +44,7 @@ body {
 					<label for="aaa">내용</label>
 					<textarea class="form-control" rows="3" name="content">${article.content}</textarea>
 				</div>
-				<input type="hidden" name="id" value="${article.id }"/>
+				<input type="hidden" name="no" value="${article.no }"/>
 				<button type="submit" id="button1" class="btn btn-default">작성</button>
 
 			</form>

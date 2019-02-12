@@ -8,8 +8,12 @@
 		select * from user where userId=#{userId} and password=#{password}
 	</select>
 	
-	<select id="BoardList" resultType="ArticleDto">
+	<select id="boardList" resultType="ArticleDto">
 		select no, title, date, writer from board
+	</select>
+	
+	<select id="checkId"  resultType="Integer">
+		SELECT count(*) FROM user where userId=#{userId}
 	</select>
 	
 	<insert id="userInsert" parameterType="UserDto">
@@ -22,39 +26,39 @@
 		values( #{title},#{date},#{writer},#{content},#{userNo} )
 	</insert>
 	
-	<select id="ReadArticle" resultType="ArticleDto">
-		select id, title, date, writer, content, userNo from board
-		where id=#{id}
+	<select id="readArticle" resultType="ArticleDto">
+		select no, title, date, writer, content, userNo from board
+		where no=#{no}
 	</select>
 
-	<insert id="AddReply" >
-		insert into reply (content, date, articleId, userNo, writer)
-		values (#{content},#{date},#{articleId},#{userNo},#{writer})
+	<insert id="addReply" >
+		insert into reply (content, date, articleNo, userNo, writer)
+		values (#{content},#{date},#{articleNo},#{userNo},#{writer})
 	</insert>
 	
-	<select id="ReplyList" resultType="ReplyDto">
-		select id, content, date, writer, userNo
+	<select id="replyList" resultType="ReplyDto">
+		select no, content, date, writer, userNo
 		from reply
 		where articleNo=#{articleNo}
 		order by date asc
 	</select>
 	
-	<delete id="DeleteReply">
+	<delete id="deleteReply">
 		delete from reply
 		where no=#{no}
 	</delete>
 	
-	<delete id="DeleteArticle">
+	<delete id="deleteArticle">
 		delete from board
 		where no=#{no}
 	</delete>
 	
-	<delete id="DeleteArticleReply">
+	<delete id="deleteArticleReply">
 		delete from reply
 		where articleNo=#{articleNo}
 	</delete>
 	
-	<update id="EditArticle">
+	<update id="editArticle">
 		update board
 		set title=#{title}, content=#{content}, date=#{date}  
 		where no=#{no}

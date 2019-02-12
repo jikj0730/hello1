@@ -34,7 +34,7 @@
 </head>
 <body>
 	<sec:authentication property='user.userId' var="userId" />
-	<sec:authentication property='user.id' var="id" />
+	<sec:authentication property='user.no' var="no" />
 	로그인 정보 : ${userId }
 	<br>
 	<a href="/logout_processing" class="btn btn-success pull-right mb5">
@@ -49,7 +49,7 @@
 		<table class="table table-bordered mt5 table-hover">
 			<tr>
 				<th class="success" style="width: 15%">글번호</th>
-				<td>${article.id }</td>
+				<td>${article.no }</td>
 				<th class="success" style="width: 15%">작성자</th>
 				<td>${article.writer }</td>
 				<th class="success" style="width: 15%">시간</th>
@@ -65,12 +65,12 @@
 			</tr>
 		</table>
 		<c:choose>
-			<c:when test="${id == article.userId}">
+			<c:when test="${no == article.userNo}">
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3">
-						<a href="/board/edit?id=${article.id}" class="btn btn-warning">
+						<a href="/board/edit?no=${article.no}" class="btn btn-warning">
 							수정하기 </a>
-						<a href="/board/delete?id=${article.id}"
+						<a href="/board/delete?no=${article.no}"
 							onclick="confirm('삭제하시겠습니까?')" class="btn btn-danger"> 삭제하기 </a>
 					</div>
 				</div>
@@ -100,9 +100,9 @@
 					<p>
 						${ list.writer } / ${ list.date } 
 						<c:choose>
-							<c:when test="${id == list.userId}">
+							<c:when test="${no == list.userNo}">
 								<span class="pull-right mb5">
-									<a href="/board/reply/delete?id=${list.id}&aid=${article.id }">삭제</a>
+									<a href="/board/reply/delete?no=${list.no}&ano=${article.no }">삭제</a>
 								</span>
 							</c:when>
 							<c:otherwise>
@@ -134,7 +134,7 @@ $(document).ready(function(){
 		
 		var sendData  = JSON.stringify({
 			"content" : $("#reply").val(),
-			"articleId" : '<c:out value="${article.id}"/>'
+			"articleNo" : '<c:out value="${article.no}"/>'
 		});
 		
 		$.ajax({

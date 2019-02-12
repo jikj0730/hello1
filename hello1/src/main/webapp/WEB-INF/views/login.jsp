@@ -70,7 +70,7 @@ body {
 											placeholder="아이디를 입력하세요">
 									</div>
 									<div class="form-group">
-										<label for="exampleInputPassword1">암호</label> <input
+										<label for="exampleInputPassword1">암호 - 숫자와 문자를 포함하여 6~12자리</label> <input
 											type="password" class="form-control"
 											id="inputPassword" placeholder="암호">
 									</div>
@@ -92,12 +92,22 @@ body {
 	<script type="text/javascript">
 	$(document).ready(function(){
 		function checkVal(){
+			
+			var idPattern = /^[A-Za-z]{1}[A-Za-z0-9]{3,19}$/; //아이디 4~20 자리, 첫글자 숫자 불가
+			var passPattern = /^.*(?=.{6,20})(?=.*[0-9])(?=.*[a-zA-Z]).*$/; //비밀번호 숫자와 문자 포함하여 6~12자리
+			
 	 		if($('#inputId').val()==''){
 	 			alert("아이디를 입력해주세요.");
 	 			return false;	
 	 		}else if($('#inputPassword').val()==''){
 	 			alert("비밀번호를 입력해주세요.");
 	 			return false;	
+	 		}else if(!idPattern.test($('#inputId').val())){
+	 			alert("옳지 않은 아이디입니다.");
+	 			return false;
+	 		}else if(!passPattern.test($('#inputPassword').val())){
+	 			alert("옳지 않은 비밀번호입니다.");
+	 			return false;
 	 		}
 	 		return true;				
 	 	};
@@ -135,11 +145,11 @@ body {
     					alert(data+"가입에 성공하셨습니다.");
     					location.reload();
     				}else{
-    					alert("에러");
+    					alert("에러1");
     				}
 				},
-				error: function(){
-            		alert("에러");
+				error: function(jqXHR, textStatus, errorThrown){
+            		alert(jqXHR+"\n"+jqXHR.status+"\n"+jqXHR.statusText+"\n"+jqXHR.responseText+"\n"+jqXHR.readyState);
          	   }
 			});
 		});

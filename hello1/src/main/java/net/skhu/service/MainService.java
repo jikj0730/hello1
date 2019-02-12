@@ -21,13 +21,14 @@ public class MainService {
 	public UserDto Login(String userId, String password) {
 
 		UserDto user =  mainMapper.login(userId, password);
-		if (user == null) return null;
+		if (user == null)
+			return null;
 		return user;
 
 	}
 
-	public List<ArticleDto> BoardList(){
-		return mainMapper.BoardList();
+	public List<ArticleDto> boardList(){
+		return mainMapper.boardList();
 	}
 
 	public int userInsert(UserDto user) {
@@ -42,43 +43,50 @@ public class MainService {
 		return num;
 	}
 	
-	public ArticleDto ReadArticle(int id) {
-		return mainMapper.ReadArticle(id);
+	public ArticleDto readArticle(int no) {
+		return mainMapper.readArticle(no);
 	}
 	
-	public int AddReply(String content, String date, int articleId, int userId, String writer) {
-		int num= mainMapper.AddReply(content, date, articleId, userId, writer);
+	public int addReply(String content, String date, int articleNo, int userId, String writer) {
+		int num = mainMapper.addReply(content, date, articleNo, userId, writer);
+		//System.out.println("num="+num);
 		return num;
 	}
 	
-	public List<ReplyDto> ReplyList(int articleId){
-		return mainMapper.ReplyList(articleId);
+	public List<ReplyDto> replyList(int articleNo){
+		return mainMapper.replyList(articleNo);
 	}
 	
-	public int DeleteReply( int id ) {
-		int num = mainMapper.DeleteReply(id);
+	public int deleteReply( int no ) {
+		int num = mainMapper.deleteReply(no);
 		return num;
 	}
 	
+	/*
+	 * 게시글을 삭제할 때 삭제 순서가
+	 * 댓글 삭제->게시글 삭제로 가야 하기 때문에 트렌잭션 처리
+	 */
 	@Transactional(rollbackFor={Exception.class})
-	public boolean DeleteArticle( int id ) {
+	public boolean deleteArticle( int no ) {
 		
-		int replyCount = mainMapper.replycount(id);
+		int replyCount = mainMapper.replycount(no); 	//댓글이 존재하는지 여부 판단
+		
+		//댓글이 한개 이상 존재할 경우
 		if(replyCount>0) {
 			//댓글부터 싹 삭제
-			int num1 = mainMapper.DeleteArticleReply(id);
+			int num1 = mainMapper.deleteArticleReply(no);
 			
 			//게시글 삭제
-			int num2 = mainMapper.DeleteArticle(id);
+			int num2 = mainMapper.deleteArticle(no);
 			
 			if(num1>0 && num2>0)
 				return true;
 			else
 				return false;
 		}
-		else {
+		else { //댓글이 존재하지 않을 경우
 			//게시글 삭제
-			int num2 = mainMapper.DeleteArticle(id);
+			int num2 = mainMapper.deleteArticle(no);
 			
 			if( num2>0)
 				return true;
@@ -88,7 +96,14 @@ public class MainService {
 		
 	}
 	
-	public int EditArticle(int id, String title, String date, String content) {
-		return mainMapper.EditArticle(id, title, date, content);
+	public int editArticle(int id, String title, String date, String content) {
+		return mainMapper.editArticle(id, title, date, content);
+	}
+	
+	public int checkId(String userId) {
+		int check=0;
+		check = mainMapper.checkId(userId);
+		
+		return check;
 	}
 }

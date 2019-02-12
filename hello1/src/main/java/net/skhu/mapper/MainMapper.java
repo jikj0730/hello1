@@ -13,17 +13,18 @@ import net.skhu.dto.UserDto;
 public interface MainMapper {
 
 	UserDto login(@Param("userId") String userId, @Param("password") String password);
-	List<ArticleDto> BoardList();
+	List<ArticleDto> boardList();
 	int userInsert(UserDto user);
 	int articleInsert(@Param("title") String title, @Param("date") String date, @Param("writer") String writer,
-			@Param("content") String content, @Param("userId") int userId  );
-	ArticleDto ReadArticle(@Param("id") int id );
-	int AddReply(@Param("content") String content, @Param("date") String date, 
-			@Param("articleId") int articleId, @Param("userId") int userId, @Param("writer") String writer );
-	List<ReplyDto> ReplyList(@Param("articleId") int articleId);
-	int DeleteReply(@Param("id") int id );
-	int DeleteArticleReply(@Param("articleId") int articleId);
-	int DeleteArticle(@Param("id") int id);
-	int EditArticle(@Param("id") int id, @Param("title") String title, @Param("date") String date,@Param("content") String content);
-	int replycount(@Param("articleId") int articleId);
+			@Param("content") String content, @Param("userNo") int userNo  );
+	ArticleDto readArticle(@Param("no") int no );
+	int addReply(@Param("content") String content, @Param("date") String date, 
+			@Param("articleNo") int articleNo, @Param("userNo") int userNo, @Param("writer") String writer );
+	List<ReplyDto> replyList(@Param("articleNo") int articleNo);
+	int deleteReply(@Param("no") int no );
+	int deleteArticleReply(@Param("articleNo") int articleNo);
+	int deleteArticle(@Param("no") int no);
+	int editArticle(@Param("no") int no, @Param("title") String title, @Param("date") String date,@Param("content") String content);
+	int replycount(@Param("articleNo") int articleNo);
+	int checkId(@Param("userId") String userId);
 }
