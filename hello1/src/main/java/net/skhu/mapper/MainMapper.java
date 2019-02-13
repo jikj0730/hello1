@@ -27,4 +27,12 @@ public interface MainMapper {
 	int editArticle(@Param("no") int no, @Param("title") String title, @Param("date") String date,@Param("content") String content);
 	int replycount(@Param("articleNo") int articleNo);
 	int checkId(@Param("userId") String userId);
+	List<UserDto> userList();
+	UserDto getUser(@Param("no")int no);
+	int userPassReset(@Param("no")int no, @Param("password") String password);
+	int userTypeReset(@Param("no")int no, @Param("userType") String userType);
+	String getUserType(@Param("no")int no);
+	void deleteUser(@Param("no")int no);
+	void deleteUserReply(@Param("no")int no);
+	void deleteUserArticle(@Param("no")int no);
 }

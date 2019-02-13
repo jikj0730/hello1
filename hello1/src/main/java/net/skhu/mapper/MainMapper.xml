@@ -68,4 +68,43 @@
 		SELECT count(*) FROM reply where articleNo=#{articleNo}
 	</select>
 	
+	<select id="userList" resultType="UserDto">
+		select no, userId from user
+	</select>
+	
+	<select id="getUser" resultType="UserDto">
+		select no, userId, userType from user where no = #{no}
+	</select>
+	
+	<select id="getUserType" resultType="String">
+		select userType from user where no = #{no}
+	</select>
+	
+	<update id="userPassReset">
+		update user
+		set password = #{password}
+		where no=#{no}
+	</update>
+	
+	<update id="userTypeReset">
+		update user
+		set userType = #{userType}
+		where no=#{no}
+	</update>
+	
+	<delete id="deleteUser">
+		delete from user
+		where no=#{no}
+	</delete>
+	
+	<delete id="deleteUserReply">
+		delete from reply
+		where no=#{no}
+	</delete>
+	
+	<delete id="deleteUserArticle">
+		delete from board
+		where no=#{no}
+	</delete>
+	
 </mapper>

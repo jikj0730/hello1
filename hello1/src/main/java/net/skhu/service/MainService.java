@@ -7,20 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.skhu.Exception.UserTypeException;
 import net.skhu.dto.ArticleDto;
 import net.skhu.dto.ReplyDto;
 import net.skhu.dto.UserDto;
 import net.skhu.mapper.MainMapper;
+import net.skhu.utils.EncryptionUtils;
 
 @Service
 public class MainService {
+	
+	private static final String TYPE_ADMIN = "ROLE_ADMIN";
+	private static final String TYPE_TEST = "ROLE_TEST";
+	private static final String TYPE_USER = "ROLE_USER";
 
 	@Autowired
 	private MainMapper mainMapper;
 
 	public UserDto Login(String userId, String password) {
 
-		UserDto user =  mainMapper.login(userId, password);
+		//System.out.println(userId);
+		//System.out.println(password);
+		//System.out.println(EncryptionUtils.encryptSHA256(password));
+		UserDto user =  mainMapper.login(userId, EncryptionUtils.encryptSHA256(password));
 		if (user == null)
 			return null;
 		return user;
@@ -33,6 +42,8 @@ public class MainService {
 
 	public int userInsert(UserDto user) {
 
+		//비밀번호 암호화 알고리즘 적용
+		user.setPassword(EncryptionUtils.encryptSHA256(user.getPassword()));
 		int num = mainMapper.userInsert(user);
 		return num;
 	}
@@ -105,5 +116,71 @@ public class MainService {
 		check = mainMapper.checkId(userId);
 		
 		return check;
+	}
+	
+	public List<UserDto> userList(){
+		return mainMapper.userList();
+	}
+	
+	public UserDto getUser(int no) {
+		return mainMapper.getUser(no);
+	}
+	
+	/*
+	 * 회원 아이디를 가져와, 아이디와 동일하게 
+	 * 비밀번호를 설정해준다
+	 */
+	public int userPassReset(int no) {
+		
+		int num=0;
+		String userId = mainMapper.getUser(no).getUserId();
+		
+		num = mainMapper.userPassReset(no, EncryptionUtils.encryptSHA256(userId));
+		
+		return num;
+	}
+	
+	/*
+	 * 유저의 권한 타입을 변경한다
+	 */
+	public int userTypeReset(int select, int no) {
+		
+		int num = 0;
+		if(select==1) {
+			num = mainMapper.userTypeReset(no, TYPE_USER);
+			return num;
+		}
+		else if(select==2) {
+			num = mainMapper.userTypeReset(no, TYPE_TEST);
+			return num;
+		}
+		else if(select ==3) {
+			num = mainMapper.userTypeReset(no, TYPE_ADMIN);
+			return num;
+		}
+		else {
+			return num;
+		}
+	}
+	
+	/*
+	 * 유저를 삭제한다.
+	 * 만약 유저의 권한이 관리자라면 -1을 리턴하고, 삭제 불가능이라고 알림 띄움
+	 * 유저가 쓴 댓글, 게시글, 계정 순으로 삭제해야함
+	 */
+	@Transactional(rollbackFor={Exception.class})
+	public void deleteUser(int no) throws Exception {
+		
+		String type = mainMapper.getUserType(no);
+		
+		if(type.equals(TYPE_ADMIN)) //삭제하려는 계정이 관리자일 경우 삭제 불가능
+			throw new UserTypeException("관리자는 삭제가 불가능합니다");
+		else {
+			mainMapper.deleteReply(no);
+			mainMapper.deleteArticle(no);
+			mainMapper.deleteUser(no);
+		}
+		
+		
 	}
 }

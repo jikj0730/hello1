@@ -118,6 +118,9 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	//var temp = '<c:out value="${userId}"/>'
+	//alert(temp);
+	
 	function checkVal(){
  		if($('#reply').val()==''){
  			alert("댓글을 입력해주세요.");

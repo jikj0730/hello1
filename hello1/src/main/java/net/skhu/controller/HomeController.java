@@ -20,10 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+
+import net.skhu.Exception.UserTypeException;
 import net.skhu.dto.ReplyDto;
 import net.skhu.dto.UserDto;
 import net.skhu.service.MainService;
 import net.skhu.utils.DateUtils;
+import net.skhu.utils.EncryptionUtils;
 
 /***********************************************
  * 
@@ -43,7 +47,11 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String mainPage() {
-
+		
+		//String temp = "1";
+		//System.out.println(EncryptionUtils.encryptSHA256("1"));
+		//System.out.println(EncryptionUtils.encryptSHA256("2"));
+		//System.out.println(EncryptionUtils.encryptSHA256("3"));
 		return "login";
 	}
 
@@ -98,7 +106,7 @@ public class HomeController {
 
 		//System.out.println(user.getUserId()+"  "+user.getPassword());
 		int check = mainService.checkId(user.getUserId());
-		System.out.println(check);
+		//System.out.println(check);
 		//가입된 아이디가 없다면
 		if(check==0) {
 			int num = mainService.userInsert(user);
@@ -172,7 +180,8 @@ public class HomeController {
 
 	//@Secured("hasRole('ROLE_ADMIN')")
 	@GetMapping("admin/userlist")
-	public String testadmin() {
+	public String testadmin(Model model) {
+		model.addAttribute("userList", mainService.userList());
 		return "admin/userlist";
 	}
 
@@ -268,7 +277,7 @@ public class HomeController {
 			@RequestParam(value="content") String content, RedirectAttributes rttr,
 			@RequestParam(value="no") int no) {
 		
-		System.out.println("edit");
+		//System.out.println("edit");
 		//model.addAttribute("article", mainService.ReadArticle(id));
 		//return "board/edit";
 		rttr.addAttribute("no",no);
@@ -287,4 +296,65 @@ public class HomeController {
 		}
 			
 	}
+	
+	@GetMapping("admin/useredit")
+	public String editUser(@RequestParam(value="no") int no, Model model) {
+		model.addAttribute("user", mainService.getUser(no));
+		return "admin/editUser";
+	}
+	
+	@GetMapping("admin/userpassreset")
+	@ResponseBody
+	public ResponseEntity<String> userPassReset(@RequestParam(value="no") int no){
+		//System.out.println(no);
+		
+		int num = mainService.userPassReset(no);
+		if(num>0)
+			return new ResponseEntity<>("비밀번호를 아이디와 동일하게 초기화 하였습니다.",  HttpStatus.OK);
+		else
+			return new ResponseEntity<>("실패하였습니다.",  HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@GetMapping("admin/usertypereset")
+	@ResponseBody
+	public ResponseEntity<String> userTypeReset(@RequestParam(value="no") int no, @RequestParam(value="select") int select){
+		System.out.println(no);
+		System.out.println(select);
+		int num = mainService.userTypeReset(select, no);
+		if(num>0)
+			return new ResponseEntity<>("유저 권한을 변경하였습니다.",  HttpStatus.OK);
+		else
+			return new ResponseEntity<>("실패하였습니다.",  HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@GetMapping("admin/deleteuser")
+	@ResponseBody
+	public ResponseEntity<String> deleteUser(@RequestParam(value="no") int no){
+		System.out.println(no);
+		
+		try {
+			mainService.deleteUser(no);
+			
+			return new ResponseEntity<>("삭제하였습니다.",  HttpStatus.OK);
+			
+		} catch (UserTypeException e) {
+			System.out.println(e.getMessage());
+			System.out.println("---------");
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(),  HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+			System.out.println("---------");
+			e.printStackTrace();
+			return new ResponseEntity<>("실패하였습니다.",  HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+	
+	@GetMapping("/board/changepass")
+	public String changePass(@RequestParam(value="no") int no, Model model) {
+		
+	}
+	
 }

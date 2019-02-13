@@ -22,6 +22,9 @@
 	<a href="/logout_processing" class="btn btn-success pull-right mb5"> 
 		로그아웃
 	</a>
+	<a href="/board/changepass" class="btn btn-success pull-right mb5"> 
+		비밀번호 변경
+	</a>
 	<sec:authentication property="user.userId" />
 	<sec:authorize access="hasRole('ROLE_ADMIN')">
    	<a href="/admin/userlist"><h1>관리자-회원 목록 보기</h1></a>
