@@ -15,11 +15,11 @@ public interface MainMapper {
 	UserDto login(@Param("userId") String userId, @Param("password") String password);
 	List<ArticleDto> boardList();
 	int userInsert(UserDto user);
-	int articleInsert(@Param("title") String title, @Param("date") String date, @Param("writer") String writer,
+	int articleInsert(@Param("title") String title, @Param("date") String date,
 			@Param("content") String content, @Param("userNo") int userNo  );
 	ArticleDto readArticle(@Param("no") int no );
 	int addReply(@Param("content") String content, @Param("date") String date, 
-			@Param("articleNo") int articleNo, @Param("userNo") int userNo, @Param("writer") String writer );
+			@Param("articleNo") int articleNo, @Param("userNo") int userNo);
 	List<ReplyDto> replyList(@Param("articleNo") int articleNo);
 	int deleteReply(@Param("no") int no );
 	int deleteArticleReply(@Param("articleNo") int articleNo);
@@ -35,4 +35,5 @@ public interface MainMapper {
 	void deleteUser(@Param("no")int no);
 	void deleteUserReply(@Param("no")int no);
 	void deleteUserArticle(@Param("no")int no);
+	String getPassword(@Param("no")int no);
 }

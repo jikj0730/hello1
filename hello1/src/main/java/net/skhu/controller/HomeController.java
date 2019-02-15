@@ -1,8 +1,11 @@
 package net.skhu.controller;
 
+import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 
+import net.skhu.Exception.PasswordException;
 import net.skhu.Exception.UserTypeException;
 import net.skhu.dto.ReplyDto;
 import net.skhu.dto.UserDto;
@@ -164,7 +169,7 @@ public class HomeController {
 			//System.out.println("작성자 : "+user.getUserId());
 			//System.out.println("현재날짜 : "+ simple.format(d));
 			//System.out.println("내용 : "+content);
-			int num = mainService.articleInsert(title, DateUtils.nowDate(), user.getUserId(), content, user.getNo());
+			int num = mainService.articleInsert(title, DateUtils.nowDate(), content, user.getNo());
 			if(num>0) {
 
 				return "redirect:/board";
@@ -205,7 +210,7 @@ public class HomeController {
 			//SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//System.out.println("컨트롤러1");
 			int num = mainService.addReply(reply.getContent(), /*simple.format(d)*/ DateUtils.nowDate(), 
-					reply.getArticleNo(), user.getNo(), user.getUserId());
+					reply.getArticleNo(), user.getNo());
 			if(num>0) {
 
 				return new ResponseEntity<>(true,  HttpStatus.OK);
@@ -282,9 +287,9 @@ public class HomeController {
 		//return "board/edit";
 		rttr.addAttribute("no",no);
 		try {
-			Date d = new Date();
-			SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			int num = mainService.editArticle(no, title, simple.format(d), content);
+			//Date d = new Date();
+			///SimpleDateFormat simple = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			int num = mainService.editArticle(no, title,  DateUtils.nowDate(), content);
 			if(num>0)
 				return "redirect:/board/article";
 			else
@@ -353,8 +358,55 @@ public class HomeController {
 	}
 	
 	@GetMapping("/board/changepass")
-	public String changePass(@RequestParam(value="no") int no, Model model) {
+	public String changePass(Authentication authentication, Model model) {
+		//UserDto user = ((UserDto)authentication.getPrincipal());
+		return "/board/changepass";
+	}
+	
+	@PostMapping("/board/changepassword")
+	public void changePassword(Authentication authentication,
+			@RequestParam(value="pass1") String pass1,
+			@RequestParam(value="pass2") String pass2,
+			 HttpServletResponse response) throws Exception{
 		
+		//ModelAndView model = new ModelAndView("");
+		UserDto user = ((UserDto)authentication.getPrincipal());
+		//System.out.println(pass1);
+		//System.out.println(pass2);
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		try {
+			
+			mainService.changePassword(pass1, pass2, user);
+			out.println("<script>alert('비밀번호가 변경되었습니다.'); location.href='/logout_processing';</script>"); 
+			
+			//return new ResponseEntity<>("비빈번호를 번경하였습니다.",  HttpStatus.OK);
+		} catch (PasswordException e) {
+			// TODO: handle exception
+			//System.out.println(e.getMessage());
+			//System.out.println("---------");
+			e.printStackTrace();
+			out.println("<script>alert('실패하였습니다.'); location.href='/board';</script>"); 
+			//return new ResponseEntity<>(e.getMessage(),  HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (SQLException e) {
+			// TODO: handle exception
+			//System.out.println(e.getMessage());
+			//System.out.println("---------");
+			e.printStackTrace();
+			out.println("<script>alert('실패하였습니다.'); location.href='/board';</script>");
+			//return new ResponseEntity<>(e.getMessage(),  HttpStatus.INTERNAL_SERVER_ERROR);
+		}catch (Exception e) {
+			// TODO: handle exception
+			//System.out.println(e.getMessage());
+			//System.out.println("---------");
+			e.printStackTrace();
+			out.println("<script>alert('실패하였습니다.'); location.href='/board';</script>");
+			//return new ResponseEntity<>(e.getMessage(),  HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		out.flush();
+		//return model;
 	}
 	
 }

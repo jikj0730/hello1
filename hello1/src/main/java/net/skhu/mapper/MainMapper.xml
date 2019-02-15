@@ -9,7 +9,9 @@
 	</select>
 	
 	<select id="boardList" resultType="ArticleDto">
-		select no, title, date, writer from board
+		select a.no, a.title, a.date, b.userId writer
+		from board a left join user b
+		on a.userNo = b.no
 	</select>
 	
 	<select id="checkId"  resultType="Integer">
@@ -22,24 +24,27 @@
 	</insert>
 	
 	<insert id="articleInsert">
-		insert into board (title, date, writer, content, userNo)
-		values( #{title},#{date},#{writer},#{content},#{userNo} )
+		insert into board (title, date, content, userNo)
+		values( #{title},#{date},#{content},#{userNo} )
 	</insert>
 	
 	<select id="readArticle" resultType="ArticleDto">
-		select no, title, date, writer, content, userNo from board
-		where no=#{no}
+		select a.no, a.title, a.date, b.userId writer, a.content, a.userNo
+		from board a left join user b
+		on a.userNo = b.no
+		where a.no=#{no}
 	</select>
 
 	<insert id="addReply" >
-		insert into reply (content, date, articleNo, userNo, writer)
-		values (#{content},#{date},#{articleNo},#{userNo},#{writer})
+		insert into reply (content, date, articleNo, userNo)
+		values (#{content},#{date},#{articleNo},#{userNo})
 	</insert>
 	
 	<select id="replyList" resultType="ReplyDto">
-		select no, content, date, writer, userNo
-		from reply
-		where articleNo=#{articleNo}
+		select a.no, a.content, a.date, b.userId writer, a.userNo
+		from reply a left join user b
+		on a.userNo=b.no
+		where a.articleNo=#{articleNo}
 		order by date asc
 	</select>
 	
@@ -106,5 +111,10 @@
 		delete from board
 		where no=#{no}
 	</delete>
+	
+	<select id="getPassword"  resultType="String">
+		select password from user where no=#{no}
+	</select>
+	
 	
 </mapper>

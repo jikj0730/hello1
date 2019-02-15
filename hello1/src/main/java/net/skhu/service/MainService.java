@@ -1,5 +1,6 @@
 package net.skhu.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.skhu.Exception.PasswordException;
 import net.skhu.Exception.UserTypeException;
 import net.skhu.dto.ArticleDto;
 import net.skhu.dto.ReplyDto;
@@ -48,9 +50,9 @@ public class MainService {
 		return num;
 	}
 
-	public int articleInsert(String title, String date, String writer, String content, int userId) {
+	public int articleInsert(String title, String date, String content, int userId) {
 
-		int num = mainMapper.articleInsert(title, date, writer, content, userId);
+		int num = mainMapper.articleInsert(title, date, content, userId);
 		return num;
 	}
 	
@@ -58,8 +60,8 @@ public class MainService {
 		return mainMapper.readArticle(no);
 	}
 	
-	public int addReply(String content, String date, int articleNo, int userId, String writer) {
-		int num = mainMapper.addReply(content, date, articleNo, userId, writer);
+	public int addReply(String content, String date, int articleNo, int userId) {
+		int num = mainMapper.addReply(content, date, articleNo, userId);
 		//System.out.println("num="+num);
 		return num;
 	}
@@ -181,6 +183,29 @@ public class MainService {
 			mainMapper.deleteUser(no);
 		}
 		
+		
+	}
+	
+	/*
+	 * 비밀번호를 변경한다.
+	 * 기존의 비밀번호가 디비와 일치하면 변경을 진행하고
+	 * 다르다면 변경하지 않는다.
+	 */
+	public void changePassword(String pass1, String pass2, UserDto user) throws Exception  {
+		
+		pass1 = EncryptionUtils.encryptSHA256(pass1); //입력받은 기존 비밀번호
+		pass2 = EncryptionUtils.encryptSHA256(pass2); //바꿀 비빌 번호
+		
+		String currentPass = mainMapper.getPassword(user.getNo()); //디비에 저장된 비빌번호
+		
+		if(currentPass.equals(pass1)) {
+			int num = mainMapper.userPassReset(user.getNo(), pass2);
+			if(!(num>0)) {
+				throw new SQLException("디비 업데이트 오류");
+			}
+		}else {
+			throw new PasswordException("기존 비밀번호가 일치하지 않습니다.");
+		}
 		
 	}
 }
