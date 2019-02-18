@@ -13,7 +13,7 @@ import net.skhu.dto.UserDto;
 public interface MainMapper {
 
 	UserDto login(@Param("userId") String userId, @Param("password") String password);
-	List<ArticleDto> boardList();
+	List<ArticleDto> boardList(@Param("search") String search, @Param("select") String select );
 	int userInsert(UserDto user);
 	int articleInsert(@Param("title") String title, @Param("date") String date,
 			@Param("content") String content, @Param("userNo") int userNo  );

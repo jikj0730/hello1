@@ -38,8 +38,8 @@ public class MainService {
 
 	}
 
-	public List<ArticleDto> boardList(){
-		return mainMapper.boardList();
+	public List<ArticleDto> boardList(String search , String select){
+		return mainMapper.boardList(search, select);
 	}
 
 	public int userInsert(UserDto user) {

@@ -96,11 +96,29 @@ public class HomeController {
 	 */
 	//@Secured({"ROLE_ADMIN, "ROLE_USER"})
 	@GetMapping("/board")
-	public String board(Model model) {
+	public String board(Model model, @RequestParam(value="search", required=false) String search,
+			@RequestParam(value="select", required=false) String select) {
 
-		model.addAttribute("List", mainService.boardList());
+		//select가 1일 경우 -> 제목으로 검색
+		//select가 2일 경우 -> 사람 이름으로 검색
+		System.out.println(search);
+		System.out.println(select);
+		model.addAttribute("List", mainService.boardList(search, select));
 		return "board/board";
 	}
+	
+	@PostMapping("/board")
+	public String board_post(Model model, @RequestParam(value="search", required=false) String search,
+			@RequestParam(value="select", required=false) String select) {
+
+		//select가 1일 경우 -> 제목으로 검색
+		//select가 2일 경우 -> 사람 이름으로 검색
+		System.out.println(search);
+		System.out.println(select);
+		model.addAttribute("List", mainService.boardList(search, select));
+		return "board/board";
+	}
+
 
 	/*
 	 * 회원가입 요청을 받아 회원가입을 처리한다
@@ -387,7 +405,7 @@ public class HomeController {
 			//System.out.println(e.getMessage());
 			//System.out.println("---------");
 			e.printStackTrace();
-			out.println("<script>alert('실패하였습니다.'); location.href='/board';</script>"); 
+			out.println("<script>alert('"+e.getMessage()+"'); location.href='/board';</script>"); 
 			//return new ResponseEntity<>(e.getMessage(),  HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (SQLException e) {
 			// TODO: handle exception

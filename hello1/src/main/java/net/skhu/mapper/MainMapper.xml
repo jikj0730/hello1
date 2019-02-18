@@ -12,6 +12,12 @@
 		select a.no, a.title, a.date, b.userId writer
 		from board a left join user b
 		on a.userNo = b.no
+			<if test="select==1">
+				where INSTR(a.title, #{search})
+			</if>
+			<if test="select==2">
+				where INSTR(b.userId, #{search})
+			</if>
 	</select>
 	
 	<select id="checkId"  resultType="Integer">
